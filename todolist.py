@@ -58,6 +58,15 @@ def delete():
     flash('Task was deleted successfully!')
     return redirect(url_for('task'))
 
+@app.route('/edit', methods=['POST'])
+def edit():
+    if not session.get('logged_in'):
+        abort(401)
+    updatetask(request.form['category'], request.form['priority'],
+               request.form['description'], request.form['id'])
+    flash('Task was deleted successfully!')
+    return redirect(url_for('task'))
+
 def addtask(category, priority, description):
     cmd = ('insert into tasks(category, priority, description) '
            'values(?, ?, ?)')
@@ -70,6 +79,13 @@ def removetask(category, priority, description, task_id):
            'priority = ? and description = ? and id = ?')
     query_db(cmd, [category, priority, description, task_id], one=True)
     get_db().commit()
+
+def updatetask(category, priority, description, task_id):
+    cmd = ('update tasks set category = ?, priority = ?, '
+           'description = ? WHERE id = ?')
+    query_db(cmd, [category, priority, description, task_id], one=True)
+    get_db().commit()
+
 
 def query_db(query, args=(), one=False):
     cur = get_db().cursor()

@@ -22,13 +22,26 @@
         <th>Category</th>
         <th>Priority</th>
         <th>Description</th>
-        <th>Operation</th>
+        <th>Edit</th>
+        <th>Delete</th>
       </tr>
       {% for task in tasks %}
         <tr>
-          <td>{{ task['category'] }}</td>
-          <td>{{ task['priority'] }}</td>
-          <td>{{ task['description'] }}</td>
+          {% if not session.logged_in %}
+            <td>{{ task['category'] }}</td>
+            <td>{{ task['priority'] }}</td>
+            <td>{{ task['description'] }}</td>
+            <td></td>
+          {% else %}
+          <form class="operation_from" action="{{ url_for('edit') }}" method=post>
+            <td><input type=text name=category value="{{ task['category'] }}"></td>
+            <td><input type=text name=priority value="{{ task['priority'] }}"></td>
+            <td><input type=text name=description value="{{ task['description'] }}"></td>
+            <td><input type="hidden" name=id value="{{ task['id'] }}">
+                <input type=submit value=Edit>
+            </td>
+          </form>
+          {% endif %}
           <td>
             {% if session.logged_in %}
               <form class="operation_from" action="{{ url_for('delete') }}" method=post>
